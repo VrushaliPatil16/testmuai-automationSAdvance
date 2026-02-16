@@ -1,24 +1,31 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="TestMuAI Suite" parallel="classes" thread-count="2">
+<suite name="SeleniumAdvancedSuite"
+       parallel="classes"
+       thread-count="2">
 
-    <test name="Chrome_Windows_Test">
-        <parameter name="browser" value="chrome"/>
+    <!-- Test Scenario 1 -->
+    <test name="Test Scenario 1 - Chrome Windows">
+        <parameter name="browser" value="Chrome"/>
         <parameter name="browserVersion" value="128.0"/>
-        <parameter name="platform" value="Windows 10"/>
+        <parameter name="platformName" value="Windows 10"/>
+        <parameter name="testName" value="Scenario 1 - Chrome Windows 10"/>
+
         <classes>
             <class name="tests.TestScenario1"/>
         </classes>
     </test>
 
-    <test name="Edge_Mac_Test">
-        <parameter name="browser" value="edge"/>
+    <!-- Test Scenario 2 -->
+    <test name="Test Scenario 2 - Edge macOS">
+        <parameter name="browser" value="MicrosoftEdge"/>
         <parameter name="browserVersion" value="127.0"/>
-        <parameter name="platform" value="macOS Ventura"/>
+        <parameter name="platformName" value="macOS Ventura"/>
+        <parameter name="testName" value="Scenario 2 - Edge macOS Ventura"/>
+
         <classes>
-            <class name="tests.TestScenario1"/>
+            <class name="tests.TestScenario2"/>
         </classes>
     </test>
 
 </suite>
-
