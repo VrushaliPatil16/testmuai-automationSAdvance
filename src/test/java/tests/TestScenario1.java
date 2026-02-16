@@ -1,100 +1,77 @@
 package tests;
 
 import base.BaseTest;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pages.*;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TestMuaiTest extends BaseTest {
+public class TestScenario1 extends BaseTest {
 
-    @Test
-    public void seleniumAdvancedAssignmentFlow() {
+    @Test(timeOut = 20000)
+    public void runScenario1() {
 
-        HomePage homePage = new HomePage(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-        // 1 & 2
-        homePage.openWebsite();
+        driver.get("https://www.testmuai.com/");
 
-        // 3
-        homePage.scrollToExploreAgenticCloud();
+        wait.until(d ->
+                ((JavascriptExecutor) d)
+                        .executeScript("return document.readyState")
+                        .equals("complete"));
 
-        // 4
+        // Locator 1 → XPath
+        WebElement exploreBtn = driver.findElement(
+                By.xpath("//a[contains(text(),'Explore Agentic Clouds')]"));
+
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView(true);", exploreBtn);
+
         String parentWindow = driver.getWindowHandle();
-        homePage.clickExploreAgenticCloud();
+        exploreBtn.click();
 
-        // Wait until new tab opens
-        new org.openqa.selenium.support.ui.WebDriverWait(driver,
-                java.time.Duration.ofSeconds(20))
-                .until(d -> driver.getWindowHandles().size() == 2);
+        wait.until(d -> driver.getWindowHandles().size() == 2);
 
-        // 5
         Set<String> handles = driver.getWindowHandles();
         List<String> windowList = new ArrayList<>(handles);
 
-        System.out.println("Window Handles:");
-        for (String handle : windowList) {
-            System.out.println(handle);
-        }
-
-        // Identify child window
-        String childWindow = null;
-        for (String handle : windowList) {
-            if (!handle.equals(parentWindow)) {
-                childWindow = handle;
-            }
-        }
+        String childWindow = windowList.stream()
+                .filter(h -> !h.equals(parentWindow))
+                .findFirst().get();
 
         driver.switchTo().window(childWindow);
 
-        // 6
-        String expectedUrl =
-                "https://www.testmuai.com/agentic-cloud/";
         Assert.assertEquals(driver.getCurrentUrl(),
-                expectedUrl, "URL mismatch!");
+                "https://www.testmuai.com/agentic-cloud/");
 
-        AgenticCloudPage agenticPage =
-                new AgenticCloudPage(driver);
+        // Locator 2 → CSS Selector
+        WebElement tryNow = driver.findElement(
+                By.cssSelector("a[href*='signup']"));
 
-        // 7
-        agenticPage.scrollToScaleSection();
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView(true);", tryNow);
 
-        // 8
-        agenticPage.clickTryNow();
+        tryNow.click();
 
-        SignUpPage signUpPage =
-                new SignUpPage(driver);
+        Assert.assertEquals(driver.getTitle(),
+                "Sign up for free | Cross Browser Testing Tool");
 
-        // 9
-        String expectedTitle =
-                "Sign up for free | Cross Browser Testing Tool";
-        Assert.assertEquals(signUpPage.getPageTitle(),
-                expectedTitle, "Title mismatch!");
-
-        // 10
-        driver.switchTo().window(childWindow);
         driver.close();
-
-        // 11
         driver.switchTo().window(parentWindow);
-        System.out.println("Current Window Count: "
-                + driver.getWindowHandles().size());
 
-        // 12
         driver.get("https://www.testmuai.com/blog");
 
-        // 13
-        homePage.clickCommunity();
-        Assert.assertEquals(driver.getCurrentUrl(),
-                "https://community.testmuai.com/",
-                "Community URL mismatch!");
+        // Locator 3 → LinkText
+        driver.findElement(By.linkText("Community")).click();
 
-        // 14
+        Assert.assertEquals(driver.getCurrentUrl(),
+                "https://community.testmuai.com/");
+
         driver.close();
     }
 }
-
